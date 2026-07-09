@@ -6,19 +6,17 @@
   <title>特价房源</title>
   <style>
     :root {
-      --bg: #f6f7f9;
+      --bg: #f4f6f8;
       --panel: #ffffff;
       --text: #172033;
       --muted: #667085;
-      --line: #d8dee8;
-      --brand: #136f63;
-      --brand-dark: #0f564d;
-      --warn: #b54708;
+      --line: #cfd7e3;
+      --head: #e8f2ef;
+      --brand: #13715f;
       --danger: #b42318;
-      --good: #12805c;
-      --soft-warn: #fff4e5;
+      --warn: #b54708;
       --soft-danger: #fff0ed;
-      --shadow: 0 10px 28px rgba(16, 24, 40, .08);
+      --soft-warn: #fff5df;
     }
 
     * { box-sizing: border-box; }
@@ -28,7 +26,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
       background: var(--bg);
       color: var(--text);
-      font-size: 15px;
+      font-size: 14px;
       letter-spacing: 0;
     }
 
@@ -36,267 +34,192 @@
     button { border: 0; cursor: pointer; }
 
     .app {
-      width: min(760px, 100%);
-      margin: 0 auto;
       min-height: 100vh;
-      padding-bottom: 94px;
+      display: flex;
+      flex-direction: column;
     }
 
     .top {
       position: sticky;
       top: 0;
       z-index: 5;
-      background: #fff;
+      background: var(--panel);
       border-bottom: 1px solid var(--line);
-      padding: 14px 14px 12px;
+      padding: 12px;
     }
 
     .title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
     h1 {
       margin: 0;
-      font-size: 20px;
+      font-size: 19px;
       line-height: 1.2;
     }
 
-    .small-btn {
-      min-width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      background: #e7f5f1;
-      color: var(--brand-dark);
-      display: inline-flex;
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr .8fr auto;
+      gap: 8px;
       align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      white-space: nowrap;
-      padding: 0 10px;
     }
 
-    .search input {
+    input, select, textarea {
       width: 100%;
-      height: 42px;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 0 12px;
-      outline: none;
+      border-radius: 6px;
       background: #fff;
-    }
-
-    .tabs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      padding: 12px 14px 0;
-    }
-
-    .tab {
-      min-height: 42px;
-      border-radius: 8px;
-      background: #fff;
-      border: 1px solid var(--line);
       color: var(--text);
-      font-weight: 800;
-      padding: 7px 6px;
+      outline: none;
     }
 
-    .tab.active {
-      background: var(--brand);
-      border-color: var(--brand);
-      color: #fff;
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 10px 14px 4px;
-    }
-
-    .filters input,
-    .filters select {
-      height: 40px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
+    .toolbar input,
+    .toolbar select {
+      height: 38px;
       padding: 0 10px;
       min-width: 0;
     }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      padding: 10px 14px;
+    .btn {
+      height: 38px;
+      border-radius: 6px;
+      padding: 0 12px;
+      font-weight: 800;
+      white-space: nowrap;
+      background: #edf3f8;
+      color: var(--text);
     }
 
-    .stat {
+    .btn.primary {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn.danger {
+      color: var(--danger);
+      background: #fff0ed;
+    }
+
+    .summary {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .pill {
+      flex: 0 0 auto;
+      min-width: 92px;
       background: #fff;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px 8px;
+      border-radius: 6px;
+      padding: 8px 10px;
       text-align: center;
     }
 
-    .stat strong {
+    .pill strong {
       display: block;
-      font-size: 20px;
-      line-height: 1.2;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .list {
-      padding: 0 14px 16px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-      padding: 12px;
-    }
-
-    .card.expired {
-      border-color: #f4b2a8;
-      background: var(--soft-danger);
-    }
-
-    .card.soon {
-      border-color: #f7c67a;
-      background: var(--soft-warn);
-    }
-
-    .card-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .name {
       font-size: 18px;
-      font-weight: 900;
-      line-height: 1.25;
-      word-break: break-word;
+      line-height: 1.1;
     }
 
-    .price {
-      font-size: 19px;
-      color: var(--danger);
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 8px 0;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      min-height: 26px;
-      border-radius: 999px;
-      background: #e7f5f1;
-      color: var(--brand-dark);
-      padding: 3px 9px;
-      font-size: 12px;
-      font-weight: 800;
-      max-width: 100%;
-    }
-
-    .badge.warn { background: #fff0c7; color: var(--warn); }
-    .badge.danger { background: #ffe4df; color: var(--danger); }
-    .badge.good { background: #def7ec; color: var(--good); }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 12px;
-      margin-top: 8px;
-    }
-
-    .field { min-width: 0; }
-    .field.full { grid-column: 1 / -1; }
-
-    .label {
+    .pill span {
       display: block;
+      margin-top: 3px;
       color: var(--muted);
       font-size: 12px;
-      margin-bottom: 2px;
     }
 
-    .value {
-      white-space: pre-wrap;
-      word-break: break-word;
+    .table-wrap {
+      flex: 1;
+      overflow: auto;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
     }
+
+    table {
+      width: max(1180px, 100%);
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      vertical-align: middle;
+      word-break: break-word;
+      background: #fff;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: var(--head);
+      text-align: center;
+      font-weight: 900;
+    }
+
+    th:first-child,
+    td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      border-left: 1px solid var(--line);
+    }
+
+    th:first-child { z-index: 4; }
+
+    tbody tr.expired td { background: var(--soft-danger); }
+    tbody tr.soon td { background: var(--soft-warn); }
 
     .actions {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-top: 12px;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
     }
 
-    .action {
-      height: 38px;
-      border-radius: 8px;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--text);
+    .row-btn {
+      min-height: 30px;
+      border-radius: 5px;
       font-weight: 800;
+      background: #edf3f8;
+      color: var(--text);
     }
 
-    .action.primary {
-      background: var(--brand);
-      color: #fff;
-      border-color: var(--brand);
+    .row-btn.danger {
+      background: #fff;
+      color: var(--danger);
+      border: 1px solid #f4b2a8;
     }
 
-    .danger-btn { color: var(--danger); }
+    .price {
+      color: var(--danger);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .center { text-align: center; }
+    .muted { color: var(--muted); }
 
     .empty {
-      text-align: center;
+      padding: 42px 12px;
       color: var(--muted);
-      padding: 46px 18px;
-      background: #fff;
-      border: 1px dashed var(--line);
-      border-radius: 8px;
-    }
-
-    .fab {
-      position: fixed;
-      left: 50%;
-      bottom: calc(18px + env(safe-area-inset-bottom));
-      transform: translateX(-50%);
-      width: min(720px, calc(100% - 28px));
-      height: 54px;
-      border-radius: 8px;
-      background: var(--brand);
-      color: #fff;
-      font-size: 17px;
-      font-weight: 900;
-      box-shadow: 0 12px 28px rgba(19, 111, 99, .26);
+      text-align: center;
     }
 
     dialog {
-      width: min(720px, calc(100% - 20px));
+      width: min(760px, calc(100% - 20px));
       max-height: calc(100dvh - 24px);
       border: 0;
       border-radius: 8px;
@@ -309,10 +232,10 @@
     .modal-head {
       position: sticky;
       top: 0;
-      background: #fff;
       z-index: 2;
-      padding: 14px;
+      background: #fff;
       border-bottom: 1px solid var(--line);
+      padding: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -322,19 +245,19 @@
     .modal-head strong { font-size: 18px; }
 
     .form {
-      padding: 14px;
+      padding: 12px;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
     .form label {
       display: grid;
       gap: 5px;
-      min-width: 0;
       color: var(--muted);
       font-size: 13px;
       font-weight: 800;
+      min-width: 0;
     }
 
     .form label.full { grid-column: 1 / -1; }
@@ -342,18 +265,13 @@
     .form input,
     .form select,
     .form textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px;
-      color: var(--text);
-      background: #fff;
-      outline: none;
+      padding: 9px;
+      border-radius: 6px;
       min-width: 0;
     }
 
     .form textarea {
-      min-height: 76px;
+      min-height: 72px;
       resize: vertical;
     }
 
@@ -365,44 +283,54 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      padding: 12px 14px;
+      padding: 12px;
     }
 
     .modal-actions button {
-      height: 44px;
-      border-radius: 8px;
+      height: 42px;
+      border-radius: 6px;
       font-weight: 900;
     }
 
-    .cancel { background: #eef2f7; color: var(--text); }
-    .save { background: var(--brand); color: #fff; }
-
     .tools {
+      padding: 12px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      padding: 14px;
     }
 
-    .tools button,
     .tools label {
-      height: 42px;
-      border-radius: 8px;
-      background: #e7f5f1;
-      color: var(--brand-dark);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
-      text-align: center;
+      height: 38px;
+      border-radius: 6px;
+      background: #edf3f8;
+      font-weight: 800;
     }
 
     .tools input { display: none; }
 
-    @media (max-width: 430px) {
-      .filters, .grid, .form { grid-template-columns: 1fr; }
-      .actions { grid-template-columns: 1fr 1fr; }
-      .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 680px) {
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .toolbar input {
+        grid-column: 1 / -1;
+      }
+
+      .form {
+        grid-template-columns: 1fr;
+      }
+
+      .form label.full {
+        grid-column: auto;
+      }
+
+      table {
+        width: 1120px;
+      }
     }
   </style>
 </head>
@@ -410,49 +338,85 @@
   <main class="app">
     <section class="top">
       <div class="title-row">
-        <h1>特价房源</h1>
-        <button class="small-btn" id="openTools">备份</button>
+        <h1>特价房源浏览表</h1>
+        <div>
+          <button class="btn" id="openTools">备份</button>
+          <button class="btn primary" id="addListing">新增</button>
+        </div>
       </div>
-      <div class="search">
+      <div class="toolbar">
         <input id="searchInput" type="search" placeholder="搜索项目、区域、户型、楼栋、备注">
+        <input id="areaFilter" type="text" placeholder="区域">
+        <select id="budgetFilter">
+          <option value="">全部总价</option>
+          <option value="under100">100万以下</option>
+          <option value="100-150">100-150万</option>
+          <option value="150-200">150-200万</option>
+          <option value="200-300">200-300万</option>
+          <option value="over300">300万以上</option>
+        </select>
+        <select id="statusFilter">
+          <option value="">全部状态</option>
+          <option>在售</option>
+          <option>待确认</option>
+          <option>已售</option>
+          <option>暂停</option>
+        </select>
       </div>
     </section>
 
-    <nav class="tabs" aria-label="快捷筛选">
-      <button class="tab active" data-view="all">全部</button>
-      <button class="tab" data-view="active">有效</button>
-      <button class="tab" data-view="soon">快截止</button>
-      <button class="tab" data-view="expired">已过期</button>
-    </nav>
-
-    <section class="filters">
-      <input id="areaFilter" type="text" placeholder="筛选区域">
-      <select id="budgetFilter">
-        <option value="">全部总价</option>
-        <option value="under100">100万以下</option>
-        <option value="100-150">100-150万</option>
-        <option value="150-200">150-200万</option>
-        <option value="200-300">200-300万</option>
-        <option value="over300">300万以上</option>
-      </select>
+    <section class="summary">
+      <div class="pill"><strong id="totalCount">0</strong><span>全部</span></div>
+      <div class="pill"><strong id="activeCount">0</strong><span>有效</span></div>
+      <div class="pill"><strong id="soonCount">0</strong><span>快截止</span></div>
+      <div class="pill"><strong id="expiredCount">0</strong><span>已过期</span></div>
     </section>
 
-    <section class="stats" aria-label="房源统计">
-      <div class="stat"><strong id="totalCount">0</strong><span>全部房源</span></div>
-      <div class="stat"><strong id="soonCount">0</strong><span>快截止</span></div>
-      <div class="stat"><strong id="expiredCount">0</strong><span>已过期</span></div>
+    <section class="table-wrap">
+      <table>
+        <colgroup>
+          <col style="width: 92px">
+          <col style="width: 64px">
+          <col style="width: 150px">
+          <col style="width: 88px">
+          <col style="width: 96px">
+          <col style="width: 88px">
+          <col style="width: 100px">
+          <col style="width: 110px">
+          <col style="width: 110px">
+          <col style="width: 90px">
+          <col style="width: 96px">
+          <col style="width: 230px">
+          <col style="width: 190px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>操作</th>
+            <th>序号</th>
+            <th>项目</th>
+            <th>区域</th>
+            <th>特价总价</th>
+            <th>面积</th>
+            <th>户型</th>
+            <th>楼栋房号</th>
+            <th>截止时间</th>
+            <th>装修</th>
+            <th>状态</th>
+            <th>核心卖点</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody id="listingBody"></tbody>
+      </table>
+      <div class="empty" id="emptyState" hidden>暂无符合条件的特价房源</div>
     </section>
-
-    <section class="list" id="listingList"></section>
   </main>
-
-  <button class="fab" id="addListing">新增特价房</button>
 
   <dialog id="listingDialog">
     <form method="dialog" id="listingForm">
       <div class="modal-head">
         <strong id="dialogTitle">新增特价房</strong>
-        <button type="button" class="small-btn" id="closeDialog">×</button>
+        <button type="button" class="btn" id="closeDialog">关闭</button>
       </div>
       <div class="form">
         <label>项目名称
@@ -503,8 +467,8 @@
         </label>
       </div>
       <div class="modal-actions">
-        <button type="button" class="cancel" id="cancelEdit">取消</button>
-        <button type="submit" class="save">保存</button>
+        <button type="button" class="btn" id="cancelEdit">取消</button>
+        <button type="submit" class="btn primary">保存</button>
       </div>
     </form>
   </dialog>
@@ -512,26 +476,26 @@
   <dialog id="toolsDialog">
     <div class="modal-head">
       <strong>数据备份</strong>
-      <button type="button" class="small-btn" id="closeTools">×</button>
+      <button type="button" class="btn" id="closeTools">关闭</button>
     </div>
     <div class="tools">
-      <button id="exportData">导出备份</button>
+      <button class="btn" id="exportData">导出备份</button>
       <label>导入备份<input id="importData" type="file" accept="application/json"></label>
-      <button id="clearFilters">清除筛选</button>
-      <button id="clearAll" class="danger-btn">清空数据</button>
+      <button class="btn" id="clearFilters">清除筛选</button>
+      <button class="btn danger" id="clearAll">清空数据</button>
     </div>
   </dialog>
 
   <script>
     const STORAGE_KEY = "hf_special_listing_v1";
     const $ = (selector) => document.querySelector(selector);
-    const list = $("#listingList");
+    const body = $("#listingBody");
+    const emptyState = $("#emptyState");
     const form = $("#listingForm");
     const dialog = $("#listingDialog");
     const toolsDialog = $("#toolsDialog");
     let listings = loadListings();
     let editingId = null;
-    let activeView = "all";
 
     const fields = [
       "projectName", "area", "specialPrice", "originalPrice", "size", "layout",
@@ -558,9 +522,7 @@
 
     function dayDiff(dateText) {
       if (!dateText) return 9999;
-      const today = new Date(todayText()).getTime();
-      const target = new Date(dateText).getTime();
-      return Math.round((target - today) / 86400000);
+      return Math.round((new Date(dateText).getTime() - new Date(todayText()).getTime()) / 86400000);
     }
 
     function isExpired(item) {
@@ -586,8 +548,8 @@
     }
 
     function matchBudget(item, budget) {
-      if (!budget) return true;
       const price = priceNumber(item);
+      if (!budget) return true;
       if (!price) return false;
       if (budget === "under100") return price < 100;
       if (budget === "100-150") return price >= 100 && price <= 150;
@@ -601,16 +563,16 @@
       const keyword = normalize($("#searchInput").value);
       const area = normalize($("#areaFilter").value);
       const budget = $("#budgetFilter").value;
+      const status = $("#statusFilter").value;
       return listings
         .filter((item) => {
-          if (activeView === "active" && !isActive(item)) return false;
-          if (activeView === "soon" && !isSoon(item)) return false;
-          if (activeView === "expired" && !isExpired(item)) return false;
+          if (status && item.status !== status) return false;
           if (area && !normalize(item.area).includes(area)) return false;
           if (!matchBudget(item, budget)) return false;
           if (!keyword) return true;
           return [
-            item.projectName, item.area, item.layout, item.room, item.sellingPoint, item.note
+            item.projectName, item.area, item.specialPrice, item.size,
+            item.layout, item.room, item.sellingPoint, item.note
           ].some((value) => normalize(value).includes(keyword));
         })
         .sort((a, b) => {
@@ -624,67 +586,58 @@
         });
     }
 
-    function renderStats() {
-      $("#totalCount").textContent = listings.length;
-      $("#soonCount").textContent = listings.filter(isSoon).length;
-      $("#expiredCount").textContent = listings.filter(isExpired).length;
-    }
-
     function safe(text) {
       const div = document.createElement("div");
       div.textContent = text || "";
       return div.innerHTML;
     }
 
-    function deadlineBadge(item) {
-      if (isExpired(item)) return '<span class="badge danger">已过期</span>';
-      if (isSoon(item)) return `<span class="badge warn">${dayDiff(item.deadline)}天截止</span>`;
-      if (item.status === "已售") return '<span class="badge danger">已售</span>';
-      if (item.status === "暂停") return '<span class="badge warn">暂停</span>';
-      return '<span class="badge good">有效</span>';
+    function statusText(item) {
+      if (isExpired(item)) return "已过期";
+      if (isSoon(item)) return `${dayDiff(item.deadline)}天截止`;
+      return item.status || "在售";
     }
 
-    function cardHtml(item) {
-      const statusClass = isExpired(item) ? "expired" : isSoon(item) ? "soon" : "";
-      const original = item.originalPrice ? `原 ${safe(item.originalPrice)}万` : "";
+    function rowHtml(item, index) {
+      const cls = isExpired(item) ? "expired" : isSoon(item) ? "soon" : "";
+      const price = item.specialPrice ? `${safe(item.specialPrice)}万` : "-";
+      const size = item.size ? `${safe(item.size)}㎡` : "-";
       return `
-        <article class="card ${statusClass}">
-          <div class="card-head">
-            <div>
-              <div class="name">${safe(item.projectName) || "未命名房源"}</div>
-              <div class="badge-row">
-                ${deadlineBadge(item)}
-                <span class="badge">${safe(item.area) || "未填区域"}</span>
-                <span class="badge">${safe(item.status || "在售")}</span>
-              </div>
+        <tr class="${cls}">
+          <td>
+            <div class="actions">
+              <button class="row-btn" data-edit="${item.id}">编辑</button>
+              <button class="row-btn danger" data-delete="${item.id}">删除</button>
             </div>
-            <div class="price">${safe(item.specialPrice) || "-"}万</div>
-          </div>
-          <div class="grid">
-            <div class="field"><span class="label">面积</span><div class="value">${safe(item.size) || "-"}㎡</div></div>
-            <div class="field"><span class="label">户型</span><div class="value">${safe(item.layout) || "-"}</div></div>
-            <div class="field"><span class="label">楼栋房号</span><div class="value">${safe(item.room) || "-"}</div></div>
-            <div class="field"><span class="label">截止时间</span><div class="value">${safe(item.deadline) || "-"}</div></div>
-            <div class="field"><span class="label">装修</span><div class="value">${safe(item.decoration) || "-"}</div></div>
-            <div class="field"><span class="label">原总价</span><div class="value">${original || "-"}</div></div>
-            <div class="field full"><span class="label">核心卖点</span><div class="value">${safe(item.sellingPoint) || "-"}</div></div>
-            <div class="field full"><span class="label">备注</span><div class="value">${safe(item.note) || "-"}</div></div>
-          </div>
-          <div class="actions">
-            <button class="action primary" data-copy="${item.id}">复制话术</button>
-            <button class="action" data-edit="${item.id}">编辑</button>
-            <button class="action danger-btn" data-delete="${item.id}">删除</button>
-          </div>
-        </article>
+          </td>
+          <td class="center">${index + 1}</td>
+          <td>${safe(item.projectName) || "-"}</td>
+          <td class="center">${safe(item.area) || "-"}</td>
+          <td class="price">${price}</td>
+          <td class="center">${size}</td>
+          <td>${safe(item.layout) || "-"}</td>
+          <td>${safe(item.room) || "-"}</td>
+          <td class="center">${safe(item.deadline) || "-"}</td>
+          <td class="center">${safe(item.decoration) || "-"}</td>
+          <td class="center">${safe(statusText(item))}</td>
+          <td>${safe(item.sellingPoint) || "-"}</td>
+          <td>${safe(item.note) || "-"}</td>
+        </tr>
       `;
+    }
+
+    function renderStats() {
+      $("#totalCount").textContent = listings.length;
+      $("#activeCount").textContent = listings.filter(isActive).length;
+      $("#soonCount").textContent = listings.filter(isSoon).length;
+      $("#expiredCount").textContent = listings.filter(isExpired).length;
     }
 
     function render() {
       renderStats();
       const items = filteredListings();
-      list.innerHTML = items.length
-        ? items.map(cardHtml).join("")
-        : '<div class="empty">暂无符合条件的特价房源</div>';
+      body.innerHTML = items.map(rowHtml).join("");
+      emptyState.hidden = items.length > 0;
     }
 
     function openForm(item = null) {
@@ -708,28 +661,17 @@
 
     function listingFromForm() {
       const now = new Date().toISOString();
+      const oldItem = listings.find((item) => item.id === editingId);
       const data = Object.fromEntries(fields.map((field) => [field, form.elements[field].value.trim()]));
       data.id = editingId || crypto.randomUUID();
-      data.createdAt = listings.find((item) => item.id === editingId)?.createdAt || now;
+      data.createdAt = oldItem?.createdAt || now;
       data.updatedAt = now;
       return data;
     }
 
-    function copyText(item) {
-      const text = [
-        `特价房源：${item.area || ""}${item.projectName || ""}`,
-        `总价：${item.specialPrice || "-"}万${item.originalPrice ? `（原${item.originalPrice}万）` : ""}`,
-        `面积：${item.size || "-"}㎡，户型：${item.layout || "-"}`,
-        `房号：${item.room || "-"}`,
-        `截止：${item.deadline || "以案场为准"}`,
-        item.sellingPoint ? `卖点：${item.sellingPoint}` : "",
-        "具体房源、价格、优惠以案场最新释放为准。"
-      ].filter(Boolean).join("\n");
-      navigator.clipboard?.writeText(text).then(
-        () => alert("已复制房源话术"),
-        () => alert(text)
-      );
-    }
+    $("#addListing").addEventListener("click", () => openForm());
+    $("#closeDialog").addEventListener("click", closeForm);
+    $("#cancelEdit").addEventListener("click", closeForm);
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -742,45 +684,30 @@
       render();
     });
 
-    $("#addListing").addEventListener("click", () => openForm());
-    $("#closeDialog").addEventListener("click", closeForm);
-    $("#cancelEdit").addEventListener("click", closeForm);
-
-    list.addEventListener("click", (event) => {
+    body.addEventListener("click", (event) => {
       const editId = event.target.dataset.edit;
       const deleteId = event.target.dataset.delete;
-      const copyId = event.target.dataset.copy;
       if (editId) openForm(listings.find((item) => item.id === editId));
-      if (copyId) copyText(listings.find((item) => item.id === copyId));
-      if (deleteId && confirm("确定删除这个特价房源吗？")) {
+      if (deleteId && confirm("确定删除这条特价房源吗？")) {
         listings = listings.filter((item) => item.id !== deleteId);
         saveListings();
         render();
       }
     });
 
-    document.querySelectorAll(".tab").forEach((button) => {
-      button.addEventListener("click", () => {
-        activeView = button.dataset.view;
-        document.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active"));
-        button.classList.add("active");
-        render();
-      });
-    });
-
-    ["searchInput", "areaFilter", "budgetFilter"].forEach((id) => {
+    ["searchInput", "areaFilter", "budgetFilter", "statusFilter"].forEach((id) => {
       $("#" + id).addEventListener("input", render);
       $("#" + id).addEventListener("change", render);
     });
 
     $("#openTools").addEventListener("click", () => toolsDialog.showModal());
     $("#closeTools").addEventListener("click", () => toolsDialog.close());
+
     $("#clearFilters").addEventListener("click", () => {
       $("#searchInput").value = "";
       $("#areaFilter").value = "";
       $("#budgetFilter").value = "";
-      activeView = "all";
-      document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.view === "all"));
+      $("#statusFilter").value = "";
       toolsDialog.close();
       render();
     });
