@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>特价房源</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d8dee8;
+      --brand: #136f63;
+      --brand-dark: #0f564d;
+      --warn: #b54708;
+      --danger: #b42318;
+      --good: #12805c;
+      --soft-warn: #fff4e5;
+      --soft-danger: #fff0ed;
+      --shadow: 0 10px 28px rgba(16, 24, 40, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { border: 0; cursor: pointer; }
+
+    .app {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: 94px;
+    }
+
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 14px 14px 12px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .small-btn {
+      min-width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #e7f5f1;
+      color: var(--brand-dark);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      white-space: nowrap;
+      padding: 0 10px;
+    }
+
+    .search input {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      outline: none;
+      background: #fff;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 12px 14px 0;
+    }
+
+    .tab {
+      min-height: 42px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-weight: 800;
+      padding: 7px 6px;
+    }
+
+    .tab.active {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 14px 4px;
+    }
+
+    .filters input,
+    .filters select {
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 0 10px;
+      min-width: 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 10px 14px;
+    }
+
+    .stat {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .list {
+      padding: 0 14px 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    .card.expired {
+      border-color: #f4b2a8;
+      background: var(--soft-danger);
+    }
+
+    .card.soon {
+      border-color: #f7c67a;
+      background: var(--soft-warn);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .price {
+      font-size: 19px;
+      color: var(--danger);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      background: #e7f5f1;
+      color: var(--brand-dark);
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      max-width: 100%;
+    }
+
+    .badge.warn { background: #fff0c7; color: var(--warn); }
+    .badge.danger { background: #ffe4df; color: var(--danger); }
+    .badge.good { background: #def7ec; color: var(--good); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      margin-top: 8px;
+    }
+
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .value {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .action {
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .action.primary {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+
+    .danger-btn { color: var(--danger); }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 46px 18px;
+      background: #fff;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+    }
+
+    .fab {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      width: min(720px, calc(100% - 28px));
+      height: 54px;
+      border-radius: 8px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 900;
+      box-shadow: 0 12px 28px rgba(19, 111, 99, .26);
+    }
+
+    dialog {
+      width: min(720px, calc(100% - 20px));
+      max-height: calc(100dvh - 24px);
+      border: 0;
+      border-radius: 8px;
+      padding: 0;
+      box-shadow: 0 20px 70px rgba(16, 24, 40, .25);
+    }
+
+    dialog::backdrop { background: rgba(15, 23, 42, .46); }
+
+    .modal-head {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 2;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-head strong { font-size: 18px; }
+
+    .form {
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form label {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .form label.full { grid-column: 1 / -1; }
+
+    .form input,
+    .form select,
+    .form textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      min-width: 0;
+    }
+
+    .form textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    .modal-actions {
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    .modal-actions button {
+      height: 44px;
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    .cancel { background: #eef2f7; color: var(--text); }
+    .save { background: var(--brand); color: #fff; }
+
+    .tools {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .tools button,
+    .tools label {
+      height: 42px;
+      border-radius: 8px;
+      background: #e7f5f1;
+      color: var(--brand-dark);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .tools input { display: none; }
+
+    @media (max-width: 430px) {
+      .filters, .grid, .form { grid-template-columns: 1fr; }
+      .actions { grid-template-columns: 1fr 1fr; }
+      .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="top">
+      <div class="title-row">
+        <h1>特价房源</h1>
+        <button class="small-btn" id="openTools">备份</button>
+      </div>
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="搜索项目、区域、户型、楼栋、备注">
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="快捷筛选">
+      <button class="tab active" data-view="all">全部</button>
+      <button class="tab" data-view="active">有效</button>
+      <button class="tab" data-view="soon">快截止</button>
+      <button class="tab" data-view="expired">已过期</button>
+    </nav>
+
+    <section class="filters">
+      <input id="areaFilter" type="text" placeholder="筛选区域">
+      <select id="budgetFilter">
+        <option value="">全部总价</option>
+        <option value="under100">100万以下</option>
+        <option value="100-150">100-150万</option>
+        <option value="150-200">150-200万</option>
+        <option value="200-300">200-300万</option>
+        <option value="over300">300万以上</option>
+      </select>
+    </section>
+
+    <section class="stats" aria-label="房源统计">
+      <div class="stat"><strong id="totalCount">0</strong><span>全部房源</span></div>
+      <div class="stat"><strong id="soonCount">0</strong><span>快截止</span></div>
+      <div class="stat"><strong id="expiredCount">0</strong><span>已过期</span></div>
+    </section>
+
+    <section class="list" id="listingList"></section>
+  </main>
+
+  <button class="fab" id="addListing">新增特价房</button>
+
+  <dialog id="listingDialog">
+    <form method="dialog" id="listingForm">
+      <div class="modal-head">
+        <strong id="dialogTitle">新增特价房</strong>
+        <button type="button" class="small-btn" id="closeDialog">×</button>
+      </div>
+      <div class="form">
+        <label>项目名称
+          <input name="projectName" required autocomplete="off" placeholder="可写内部简称">
+        </label>
+        <label>区域
+          <input name="area" autocomplete="off" placeholder="例如：经开、包河">
+        </label>
+        <label>特价总价/万
+          <input name="specialPrice" inputmode="decimal" autocomplete="off" placeholder="例如：125">
+        </label>
+        <label>原总价/万
+          <input name="originalPrice" inputmode="decimal" autocomplete="off" placeholder="可不填">
+        </label>
+        <label>面积/㎡
+          <input name="size" inputmode="decimal" autocomplete="off" placeholder="例如：94">
+        </label>
+        <label>户型
+          <input name="layout" autocomplete="off" placeholder="例如：三房两厅">
+        </label>
+        <label>楼栋房号
+          <input name="room" autocomplete="off" placeholder="例如：3#1201">
+        </label>
+        <label>截止时间
+          <input name="deadline" type="date">
+        </label>
+        <label>装修
+          <select name="decoration">
+            <option>毛坯</option>
+            <option>精装</option>
+            <option>简装</option>
+            <option>其他</option>
+          </select>
+        </label>
+        <label>状态
+          <select name="status">
+            <option>在售</option>
+            <option>待确认</option>
+            <option>已售</option>
+            <option>暂停</option>
+          </select>
+        </label>
+        <label class="full">核心卖点
+          <textarea name="sellingPoint" placeholder="例如：低总价、现房、边户、楼层好、近地铁"></textarea>
+        </label>
+        <label class="full">备注
+          <textarea name="note" placeholder="客户适配、付款要求、佣金提醒、案场口径"></textarea>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="cancel" id="cancelEdit">取消</button>
+        <button type="submit" class="save">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="toolsDialog">
+    <div class="modal-head">
+      <strong>数据备份</strong>
+      <button type="button" class="small-btn" id="closeTools">×</button>
+    </div>
+    <div class="tools">
+      <button id="exportData">导出备份</button>
+      <label>导入备份<input id="importData" type="file" accept="application/json"></label>
+      <button id="clearFilters">清除筛选</button>
+      <button id="clearAll" class="danger-btn">清空数据</button>
+    </div>
+  </dialog>
+
+  <script>
+    const STORAGE_KEY = "hf_special_listing_v1";
+    const $ = (selector) => document.querySelector(selector);
+    const list = $("#listingList");
+    const form = $("#listingForm");
+    const dialog = $("#listingDialog");
+    const toolsDialog = $("#toolsDialog");
+    let listings = loadListings();
+    let editingId = null;
+    let activeView = "all";
+
+    const fields = [
+      "projectName", "area", "specialPrice", "originalPrice", "size", "layout",
+      "room", "deadline", "decoration", "status", "sellingPoint", "note"
+    ];
+
+    function loadListings() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveListings() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
+    }
+
+    function todayText() {
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function dayDiff(dateText) {
+      if (!dateText) return 9999;
+      const today = new Date(todayText()).getTime();
+      const target = new Date(dateText).getTime();
+      return Math.round((target - today) / 86400000);
+    }
+
+    function isExpired(item) {
+      return item.deadline && item.deadline < todayText();
+    }
+
+    function isSoon(item) {
+      const diff = dayDiff(item.deadline);
+      return diff >= 0 && diff <= 3;
+    }
+
+    function isActive(item) {
+      return !isExpired(item) && item.status !== "已售" && item.status !== "暂停";
+    }
+
+    function normalize(text) {
+      return String(text || "").trim().toLowerCase();
+    }
+
+    function priceNumber(item) {
+      const n = Number(String(item.specialPrice || "").replace(/[^\d.]/g, ""));
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function matchBudget(item, budget) {
+      if (!budget) return true;
+      const price = priceNumber(item);
+      if (!price) return false;
+      if (budget === "under100") return price < 100;
+      if (budget === "100-150") return price >= 100 && price <= 150;
+      if (budget === "150-200") return price > 150 && price <= 200;
+      if (budget === "200-300") return price > 200 && price <= 300;
+      if (budget === "over300") return price > 300;
+      return true;
+    }
+
+    function filteredListings() {
+      const keyword = normalize($("#searchInput").value);
+      const area = normalize($("#areaFilter").value);
+      const budget = $("#budgetFilter").value;
+      return listings
+        .filter((item) => {
+          if (activeView === "active" && !isActive(item)) return false;
+          if (activeView === "soon" && !isSoon(item)) return false;
+          if (activeView === "expired" && !isExpired(item)) return false;
+          if (area && !normalize(item.area).includes(area)) return false;
+          if (!matchBudget(item, budget)) return false;
+          if (!keyword) return true;
+          return [
+            item.projectName, item.area, item.layout, item.room, item.sellingPoint, item.note
+          ].some((value) => normalize(value).includes(keyword));
+        })
+        .sort((a, b) => {
+          const aExpired = isExpired(a) ? 1 : 0;
+          const bExpired = isExpired(b) ? 1 : 0;
+          if (aExpired !== bExpired) return aExpired - bExpired;
+          const aDate = a.deadline || "9999-12-31";
+          const bDate = b.deadline || "9999-12-31";
+          if (aDate !== bDate) return aDate.localeCompare(bDate);
+          return priceNumber(a) - priceNumber(b);
+        });
+    }
+
+    function renderStats() {
+      $("#totalCount").textContent = listings.length;
+      $("#soonCount").textContent = listings.filter(isSoon).length;
+      $("#expiredCount").textContent = listings.filter(isExpired).length;
+    }
+
+    function safe(text) {
+      const div = document.createElement("div");
+      div.textContent = text || "";
+      return div.innerHTML;
+    }
+
+    function deadlineBadge(item) {
+      if (isExpired(item)) return '<span class="badge danger">已过期</span>';
+      if (isSoon(item)) return `<span class="badge warn">${dayDiff(item.deadline)}天截止</span>`;
+      if (item.status === "已售") return '<span class="badge danger">已售</span>';
+      if (item.status === "暂停") return '<span class="badge warn">暂停</span>';
+      return '<span class="badge good">有效</span>';
+    }
+
+    function cardHtml(item) {
+      const statusClass = isExpired(item) ? "expired" : isSoon(item) ? "soon" : "";
+      const original = item.originalPrice ? `原 ${safe(item.originalPrice)}万` : "";
+      return `
+        <article class="card ${statusClass}">
+          <div class="card-head">
+            <div>
+              <div class="name">${safe(item.projectName) || "未命名房源"}</div>
+              <div class="badge-row">
+                ${deadlineBadge(item)}
+                <span class="badge">${safe(item.area) || "未填区域"}</span>
+                <span class="badge">${safe(item.status || "在售")}</span>
+              </div>
+            </div>
+            <div class="price">${safe(item.specialPrice) || "-"}万</div>
+          </div>
+          <div class="grid">
+            <div class="field"><span class="label">面积</span><div class="value">${safe(item.size) || "-"}㎡</div></div>
+            <div class="field"><span class="label">户型</span><div class="value">${safe(item.layout) || "-"}</div></div>
+            <div class="field"><span class="label">楼栋房号</span><div class="value">${safe(item.room) || "-"}</div></div>
+            <div class="field"><span class="label">截止时间</span><div class="value">${safe(item.deadline) || "-"}</div></div>
+            <div class="field"><span class="label">装修</span><div class="value">${safe(item.decoration) || "-"}</div></div>
+            <div class="field"><span class="label">原总价</span><div class="value">${original || "-"}</div></div>
+            <div class="field full"><span class="label">核心卖点</span><div class="value">${safe(item.sellingPoint) || "-"}</div></div>
+            <div class="field full"><span class="label">备注</span><div class="value">${safe(item.note) || "-"}</div></div>
+          </div>
+          <div class="actions">
+            <button class="action primary" data-copy="${item.id}">复制话术</button>
+            <button class="action" data-edit="${item.id}">编辑</button>
+            <button class="action danger-btn" data-delete="${item.id}">删除</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function render() {
+      renderStats();
+      const items = filteredListings();
+      list.innerHTML = items.length
+        ? items.map(cardHtml).join("")
+        : '<div class="empty">暂无符合条件的特价房源</div>';
+    }
+
+    function openForm(item = null) {
+      editingId = item ? item.id : null;
+      $("#dialogTitle").textContent = item ? "编辑特价房" : "新增特价房";
+      form.reset();
+      fields.forEach((field) => {
+        form.elements[field].value = item?.[field] || "";
+      });
+      if (!item) {
+        form.elements.decoration.value = "毛坯";
+        form.elements.status.value = "在售";
+      }
+      dialog.showModal();
+    }
+
+    function closeForm() {
+      dialog.close();
+      editingId = null;
+    }
+
+    function listingFromForm() {
+      const now = new Date().toISOString();
+      const data = Object.fromEntries(fields.map((field) => [field, form.elements[field].value.trim()]));
+      data.id = editingId || crypto.randomUUID();
+      data.createdAt = listings.find((item) => item.id === editingId)?.createdAt || now;
+      data.updatedAt = now;
+      return data;
+    }
+
+    function copyText(item) {
+      const text = [
+        `特价房源：${item.area || ""}${item.projectName || ""}`,
+        `总价：${item.specialPrice || "-"}万${item.originalPrice ? `（原${item.originalPrice}万）` : ""}`,
+        `面积：${item.size || "-"}㎡，户型：${item.layout || "-"}`,
+        `房号：${item.room || "-"}`,
+        `截止：${item.deadline || "以案场为准"}`,
+        item.sellingPoint ? `卖点：${item.sellingPoint}` : "",
+        "具体房源、价格、优惠以案场最新释放为准。"
+      ].filter(Boolean).join("\n");
+      navigator.clipboard?.writeText(text).then(
+        () => alert("已复制房源话术"),
+        () => alert(text)
+      );
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const item = listingFromForm();
+      listings = editingId
+        ? listings.map((oldItem) => oldItem.id === editingId ? item : oldItem)
+        : [item, ...listings];
+      saveListings();
+      closeForm();
+      render();
+    });
+
+    $("#addListing").addEventListener("click", () => openForm());
+    $("#closeDialog").addEventListener("click", closeForm);
+    $("#cancelEdit").addEventListener("click", closeForm);
+
+    list.addEventListener("click", (event) => {
+      const editId = event.target.dataset.edit;
+      const deleteId = event.target.dataset.delete;
+      const copyId = event.target.dataset.copy;
+      if (editId) openForm(listings.find((item) => item.id === editId));
+      if (copyId) copyText(listings.find((item) => item.id === copyId));
+      if (deleteId && confirm("确定删除这个特价房源吗？")) {
+        listings = listings.filter((item) => item.id !== deleteId);
+        saveListings();
+        render();
+      }
+    });
+
+    document.querySelectorAll(".tab").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeView = button.dataset.view;
+        document.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active"));
+        button.classList.add("active");
+        render();
+      });
+    });
+
+    ["searchInput", "areaFilter", "budgetFilter"].forEach((id) => {
+      $("#" + id).addEventListener("input", render);
+      $("#" + id).addEventListener("change", render);
+    });
+
+    $("#openTools").addEventListener("click", () => toolsDialog.showModal());
+    $("#closeTools").addEventListener("click", () => toolsDialog.close());
+    $("#clearFilters").addEventListener("click", () => {
+      $("#searchInput").value = "";
+      $("#areaFilter").value = "";
+      $("#budgetFilter").value = "";
+      activeView = "all";
+      document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.view === "all"));
+      toolsDialog.close();
+      render();
+    });
+
+    $("#exportData").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(listings, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `特价房源备份_${todayText()}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    $("#importData").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        if (!Array.isArray(data)) throw new Error("格式不正确");
+        listings = data;
+        saveListings();
+        toolsDialog.close();
+        render();
+      } catch {
+        alert("导入失败，请确认是本工具导出的备份文件。");
+      } finally {
+        event.target.value = "";
+      }
+    });
+
+    $("#clearAll").addEventListener("click", () => {
+      if (confirm("确定清空全部特价房源吗？建议先导出备份。")) {
+        listings = [];
+        saveListings();
+        toolsDialog.close();
+        render();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
