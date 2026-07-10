@@ -486,6 +486,7 @@
     </div>
   </dialog>
 
+  <script src="cloud-sync.js"></script>
   <script>
     const STORAGE_KEY = "hf_special_listing_v1";
     const $ = (selector) => document.querySelector(selector);
@@ -512,6 +513,7 @@
 
     function saveListings() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
+      CloudStore.save(listings);
     }
 
     function todayText() {
@@ -749,6 +751,16 @@
     });
 
     render();
+    CloudStore.init({
+      title: "特价房源云端版",
+      dataset: "special_listings",
+      getData: () => listings,
+      setData: (data) => {
+        listings = data;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
+        render();
+      }
+    });
   </script>
 </body>
 </html>
