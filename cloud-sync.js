@@ -227,6 +227,8 @@
 
   async function connect() {
     setStatus("正在同步", "saving");
+    const openWhileSyncing = options.seedWhenEmpty;
+    if (openWhileSyncing) overlay.hidden = true;
     try {
       const row = await loadRow(options.dataset);
       if (row) {
@@ -245,6 +247,7 @@
       showMigration(localData);
     } catch (error) {
       setStatus("同步失败", "error");
+      if (openWhileSyncing) return;
       showLogin(error.message);
     }
   }
